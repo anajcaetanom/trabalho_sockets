@@ -6,7 +6,6 @@
 #####################################################
 
 from Config import *
-import queue
 
 # Dicionário com os ambientes catalogados
 global roomDict
