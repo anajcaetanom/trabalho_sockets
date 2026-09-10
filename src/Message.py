@@ -5,21 +5,24 @@
 #                                                   #
 #####################################################
 
+import ctypes
+import struct
+from datetime import datetime, timedelta, timezone
+
 from Config import *
 from ControlItem import *
 from Device import *
-from datetime import datetime
-import struct
-import ctypes
+
+SP_TZ = timezone(timedelta(hours=-3))
 
 def unixTimeStamp():
-	return datetime.timestamp(datetime.now())
+	return datetime.timestamp(datetime.now(SP_TZ))
 
 #[datahora_unpacked] = struct.unpack('!d', datahora_packed)
 #datahora = datetime.datetime.fromtimestamp(datahora_unpacked)	
 
 # Estrutura compartilhada por todas as mensagens
-class Message():
+class Message:
 	code = None		# 1 byte - unsigned char 
 	dateTime = None	# 8 bytes - double - Timestamp da mensagem
 	subject = None	# Descrição do tipo de mensagem
@@ -35,7 +38,8 @@ class Message():
 		return struct.calcsize(self.mask)
 
 	def toString(self):
-		dateTime = datetime.fromtimestamp(self.dateTime)
+		
+		dateTime = datetime.fromtimestamp(self.dateTime, SP_TZ)
 		dateTimeStr = dateTime.strftime("%m/%d/%Y, %H:%M:%S")
 		return f"[{dateTimeStr}] {self.code}: {self.subject}, " + self.toStringMsg()
 
@@ -53,7 +57,7 @@ class MessageStatus(Message):
 	# Campos da mensagem
 	deviceID = None	# 4 bytes - unsigned int
 	status = None	# 2 bytes - unsigned short
-	strStatus = [	'[1] Dispositivo foi registrado',
+	strStatus = [	'[1] Dispositivo foi registrado',  
 					'[2] Valor de leitura recebido',
 					'[3] Ação executada',
 					'[4] Dispositivo ainda não registrado',
@@ -223,7 +227,7 @@ class MessageSensor(Message):
 		self.subject = 'Leitura'
 
 	def toStringMsg(self):
-		if(self.deviceID != None and self.value != None):
+		if (self.deviceID != None and self.value != None):
 			return f"Dispositivo: {self.deviceID}, Valor do sensor: {self.value}"
 		else:
 			return 'Mensagem não inicializada'
@@ -257,7 +261,7 @@ class MessageLamp(Message):
 		self.subject = 'Atuador'
 
 	def toStringMsg(self):
-		if(self.deviceID != None and self.action != None):
+		if (self.deviceID != None and self.action != None):
 			if self.action == LUZ_APAGADA:
 				return f"Ação: {self.action} (Apagar Luz)"
 			if self.action == LUZ_ACESA:
@@ -291,9 +295,9 @@ def getMessage(buffer):
 	codeBin = buffer[:1]
 	if len(codeBin) == 1:
 		code, = struct.unpack('!B', codeBin)
-		if code >= 1 and code <= 6:
+		if code >= 1 and code <= 7:
 			# tamanho de cada tipo de mensagem
-			msgsSize = [15,10,11,11,17,14]
+			msgsSize = [15,10,11,11,17,14,14]
 			msgSize = msgsSize[code-1]
 			# caso especial, mensagem com a lista possui tamanho variável
 			if code == MSG_LISTA_AMBIENTES:
@@ -319,6 +323,8 @@ def getMessage(buffer):
 				msg = MessageSensor()
 			if code == MSG_LAMPADA:
 				msg = MessageLamp()
+			if code == MSG_AR:
+				msg = MessageAr()
 			# decodifica a mensagem recebida
 			msg.unpack(msgData)
 		else:
@@ -351,3 +357,42 @@ def ReceiveMessage(connection, device):
 		# adiciona novos dados ao buffer
 		device.buffer = device.buffer + dataBin
 	return None
+
+class MessageAr(Message):
+
+	# Campos da mensagem
+	deviceID = None		# 4 bytes - unsigned int
+	action = None		# 1 byte - unsigned char
+							# 0 = Desligar
+							# 1 = Ligar
+
+	def __init__(self):
+		self.code = MSG_LAMPADA
+		self.mask = '!BdIB'
+		self.subject = 'Atuador Ar'
+
+	def toStringMsg(self):
+		if (self.deviceID != None and self.action != None):
+			if self.action == AR_DESLIGADO:
+				return f"Ação: {self.action} (Desligar ar condicionado)"
+			if self.action == AR_LIGADO:
+				return f"Ação: {self.action} (Ligar ar condicionado)"
+			else:
+				return f"Ação: {self.action} (Desconhecida)"
+		else:
+			return 'Mensagem não inicializada'
+
+	# ! network (= big-endian)
+	# B unsigned char (codigo)
+	# d double (datahora)
+	# I unsigned int (devID)
+	# B unsigned char (acao)
+	# Funcao de empacotamento de mensagem
+	def pack(self, deviceID, action):
+		self.dateTime = unixTimeStamp()
+		self.deviceID = deviceID
+		self.action = action
+		return struct.pack(self.mask, self.code, self.dateTime, self.deviceID, self.action)
+
+	def unpack(self, msg):
+		code, self.dateTime, self.deviceID, self.action = struct.unpack(self.mask, msg)
