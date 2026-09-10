@@ -90,14 +90,14 @@ class MonitorItem:
 							#	INCLUIR_LAMPADA / EXCLUIR_LAMPADA
 							# Sensor de presença:
 							#	PRESENCA_NAO_DETECTADA / PRESENCA_DETECTADA
-	lampQueue = None		# Fila para comunicação com a lâmpada
+	deviceQueue = None		# Fila para comunicação com a lâmpada
 
-	def __init__(self, deviceID, deviceTypeCode, roomID, command, lampQueue):
+	def __init__(self, deviceID, deviceTypeCode, roomID, command, deviceQueue):
 		self.deviceID = deviceID
 		self.deviceTypeCode = deviceTypeCode
 		self.roomID = roomID
 		self.command = command
-		self.lampQueue = lampQueue
+		self.deviceQueue = deviceQueue
 
 # Incluir um tipo no dicionário
 def AddTypeItem(typeItem):
