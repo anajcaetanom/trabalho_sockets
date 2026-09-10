@@ -17,13 +17,11 @@ typeDict = {}
 
 
 # Objeto que mantém os dados de um ambiente
-class RoomItem():
+class RoomItem:
 	roomID = ''    # ID do ambiente
 	roomName = ''  # Nome do ambiente
 	lampQueueList = {}
-	#runningStatus = False  # Possui thread monitorando?
-	#thread = None          # Objeto da thread
-	#eventObject = None     # Objeto de evento para cancelar o timeout
+	arQueueList = {}
 
 	# Inicializa com ID e Nome do ambiente
 	def __init__(self, roomID, roomName):
@@ -34,7 +32,7 @@ class RoomItem():
 	# Gerar a lista de lâmpadas do ambiente em formato texto
 	def LampListToString(self):
 		deviceList = []
-		for deviceID in self.lampQueueList.keys():
+		for deviceID in self.lampQueueList:
 			deviceList.append(f'{deviceID}')
 		return ', '.join(deviceList)
 
@@ -56,15 +54,26 @@ class RoomItem():
 		self.lampQueueList.pop(deviceID)
 		return len(self.lampQueueList)
 
-	# Se um sensor foi acionado, interrompe o timeout
+	# Envia comando do sensor pra a lampada
 	def Sensor(self, command):
-		for deviceID, lampQueue in self.lampQueueList.items():
+		for lampQueue in self.lampQueueList.values():
 			lampQueue.put(int(command))
 
+	def addAr(self, deviceID, airQueue):
+		self.arQueueList.update({deviceID: airQueue})
+
+	def delAr(self, deviceID):
+		self.arQueueList.pop(deviceID)
+		return len(self.arQueueList)
+
+	def Temperature(self, command):
+		for arQueue in self.arQueueList.values():
+			arQueue.put(int(command))
+
 # Objeto contendo os tipos catalogados
-class TypeItem():
+class TypeItem:
 	typeID = ''    # ID do tipo
-	typeCode = ''  # Código do tipo 'L' Lâmpada, 'S' Sensor de presença e 'T' Temperatura
+	typeCode = ''  # Código do tipo 'L' Lâmpada, 'S' Sensor de presença, 'T' Temperatura e 'A' Ar Condicionado
 	typeName = ''  # Nome do dispositivo
 
 	def __init__(self, typeID, typeCode, typeName):
@@ -73,7 +82,7 @@ class TypeItem():
 		self.typeName = typeName
 
 # Formato da mensagem enviada pela fila para o controle geral
-class MonitorItem():
+class MonitorItem:
 	deviceID = None			# ID do dispositivo
 	deviceTypeCode = None	# Código 'L' Lâmpada ou 'S' Sensor de Presença
 	roomID = None			# ID do ambiente
