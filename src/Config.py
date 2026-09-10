@@ -43,6 +43,8 @@ NUM_SENSOR_PRESENCA = 2
 COD_SENSOR_PRESENCA = 'S'
 NUM_TERMOMETRO = 3
 COD_TERMOMETRO = 'T'
+NUM_AR = 4
+COD_AR = 'A'
 
 # Códigos das mensagens
 MSG_NULL = 0
@@ -52,6 +54,7 @@ MSG_LISTA_AMBIENTES = 3
 MSG_SELECIONA_AMBIENTE = 4
 MSG_SENSOR = 5
 MSG_LAMPADA = 6
+MSG_AR = 7
 
 # Máquina de estados do cliente conectado
 SM_DESCONECTAR = 0
@@ -59,6 +62,7 @@ SM_INICIALIZANDO = 1
 SM_SELECIONA_AMBIENTE = 2
 SM_CONECTADO_SENSOR = 3
 SM_CONECTADO_LAMPADA = 4
+SM_CONECTADO_AR = 5
 
 # Comandos para fazer manutenção da lista de lâmpadas conectadas
 INCLUIR_LAMPADA = 1
@@ -69,3 +73,9 @@ LUZ_ACESA = 1
 # Valores possíveis no sensor de presença
 PRESENCA_NAO_DETECTADA = 0
 PRESENCA_DETECTADA = 1
+
+# Ar
+INCLUIR_AR = 3
+EXCLUIR_AR = 4
+AR_DESLIGADO = 0
+AR_LIGADO = 1
