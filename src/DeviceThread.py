@@ -146,7 +146,7 @@ def WaitArQueue(device):
 			print(device.toString() + ': Ligar ar condicionado')
 		elif action == AR_DESLIGADO:
 			print(device.toString() + ': Desligar ar condicionado')
-		msg = MessageLamp()
+		msg = MessageAr()
 		SendMessage(device, msg.pack(device.ID, action))
 	else:
 		print(device.toString() + ': Comando inválido para ar condicionado')

@@ -286,6 +286,45 @@ class MessageLamp(Message):
 	def unpack(self, msg):
 		code, self.dateTime, self.deviceID, self.action = struct.unpack(self.mask, msg)
 
+class MessageAr(Message):
+
+	# Campos da mensagem
+	deviceID = None		# 4 bytes - unsigned int
+	action = None		# 1 byte - unsigned char
+						# 0 = Desligar
+						# 1 = Ligar
+
+	def __init__(self):
+		self.code = MSG_AR
+		self.mask = '!BdIB'
+		self.subject = 'Atuador Ar'
+
+	def toStringMsg(self):
+		if (self.deviceID != None and self.action != None):
+			if self.action == AR_DESLIGADO:
+				return f"Ação: {self.action} (Desligar ar condicionado)"
+			if self.action == AR_LIGADO:
+				return f"Ação: {self.action} (Ligar ar condicionado)"
+			else:
+				return f"Ação: {self.action} (Desconhecida)"
+		else:
+			return 'Mensagem não inicializada'
+
+	# ! network (= big-endian)
+	# B unsigned char (codigo)
+	# d double (datahora)
+	# I unsigned int (devID)
+	# B unsigned char (acao)
+	# Funcao de empacotamento de mensagem
+	def pack(self, deviceID, action):
+		self.dateTime = unixTimeStamp()
+		self.deviceID = deviceID
+		self.action = action
+		return struct.pack(self.mask, self.code, self.dateTime, self.deviceID, self.action)
+
+	def unpack(self, msg):
+		code, self.dateTime, self.deviceID, self.action = struct.unpack(self.mask, msg)
+
 # cria um objeto contendo a primeira mensagem do buffer
 # retorna (1) None se não existir uma mensagem completa ou buffer vazio
 #         (2) o que restou no buffer após retirar a primeira mensagem
@@ -358,41 +397,3 @@ def ReceiveMessage(connection, device):
 		device.buffer = device.buffer + dataBin
 	return None
 
-class MessageAr(Message):
-
-	# Campos da mensagem
-	deviceID = None		# 4 bytes - unsigned int
-	action = None		# 1 byte - unsigned char
-						# 0 = Desligar
-						# 1 = Ligar
-
-	def __init__(self):
-		self.code = MSG_AR
-		self.mask = '!BdIB'
-		self.subject = 'Atuador Ar'
-
-	def toStringMsg(self):
-		if (self.deviceID != None and self.action != None):
-			if self.action == AR_DESLIGADO:
-				return f"Ação: {self.action} (Desligar ar condicionado)"
-			if self.action == AR_LIGADO:
-				return f"Ação: {self.action} (Ligar ar condicionado)"
-			else:
-				return f"Ação: {self.action} (Desconhecida)"
-		else:
-			return 'Mensagem não inicializada'
-
-	# ! network (= big-endian)
-	# B unsigned char (codigo)
-	# d double (datahora)
-	# I unsigned int (devID)
-	# B unsigned char (acao)
-	# Funcao de empacotamento de mensagem
-	def pack(self, deviceID, action):
-		self.dateTime = unixTimeStamp()
-		self.deviceID = deviceID
-		self.action = action
-		return struct.pack(self.mask, self.code, self.dateTime, self.deviceID, self.action)
-
-	def unpack(self, msg):
-		code, self.dateTime, self.deviceID, self.action = struct.unpack(self.mask, msg)
