@@ -367,7 +367,7 @@ class MessageAr(Message):
 						# 1 = Ligar
 
 	def __init__(self):
-		self.code = MSG_LAMPADA
+		self.code = MSG_AR
 		self.mask = '!BdIB'
 		self.subject = 'Atuador Ar'
 
