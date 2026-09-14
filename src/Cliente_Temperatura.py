@@ -5,10 +5,12 @@
 #													#
 #####################################################
 
+import socket
+import sys
+
+from ClientUtil import *
 from Config import *
 from Message import *
-from ClientUtil import *
-import socket
 
 deviceID = None
 
@@ -16,15 +18,15 @@ deviceID = None
 # Inicializando... #
 ####################
 if __name__ == '__main__':
-	print('Inicializando cliente: Sensor de Presença...')
+	print('Inicializando cliente: Sensor de Temperatura...')
 	try:
 		connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		destination = (SERVIDOR, PORTA)
 		connection.connect(destination)
 	except:
 		print(f'Falha ao tentar se conectar com o servidor {SERVIDOR} porta {PORTA}')
-		exit()
-	device = Device(connection, NUM_TERMOMETRO)
+		sys.exit()
+	device = DeviceClient(connection, NUM_TERMOMETRO)
 	roomDict = ClientRegister(device)
 	if roomDict != None:
 		deviceID, roomID, roomName = SelectRoom(device, roomDict)
@@ -32,9 +34,10 @@ if __name__ == '__main__':
 			lastSensorValue = None
 			while True:
 				print(f'\n==> Ambiente [{roomID}] {roomName}')
-				print ('Para sair use CTRL+X')
+				print ('Para sair digite "sair"')
 				sensorValue = input('Temperatura lida no sensor: ')
-				if sensorValue == '\x18': break
+				if sensorValue == 'sair': 
+					break
 				sensorValue = sensorValue.replace(",",".")
 				try:
 					floatSensorValue = float(sensorValue)

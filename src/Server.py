@@ -6,13 +6,16 @@
 #####################################################
 
 # SERVIDOR
-from Config import *
-from GeneralControl import *
-from DeviceThread import *
-from os.path import exists
-import socket
-import threading
 import queue
+import socket
+import sys
+import threading
+from os.path import exists
+
+from Config import *
+from DeviceThread import *
+from GeneralControl import *
+
 
 # Carrega uma tabela em formato texto e retorna em forma de lista
 def LoadTable(fileName):
@@ -22,7 +25,7 @@ def LoadTable(fileName):
 	result = []
 	if not exists(fileName):
 		print('Arquivo não encontrado na pasta')
-		exit()
+		sys.exit()
 	else:
 		FILE = open(fileName, 'r', encoding='UTF-8')
 		for line in FILE:
@@ -80,8 +83,5 @@ if __name__ == '__main__':
 		print('Finalizando servidor...')
 		# finalizando
 		tcp.close()
-		pass
-	finally:
-		# finalizando
-		tcp.close()
-	print('Servidor desligado')
+		print('Servidor desligado')
+		sys.exit()

@@ -5,10 +5,12 @@
 #													#
 #####################################################
 
+import socket
+import sys
+
+from ClientUtil import *
 from Config import *
 from Message import *
-from ClientUtil import *
-import socket
 
 deviceID = None
 
@@ -23,19 +25,20 @@ if __name__ == '__main__':
 		connection.connect(destination)
 	except:
 		print(f'Falha ao tentar se conectar com o servidor {SERVIDOR} porta {PORTA}')
-		exit()
-	device = Device(connection, NUM_SENSOR_PRESENCA)
+		sys.exit()
+	device = DeviceClient(connection, NUM_SENSOR_PRESENCA)
 	roomDict = ClientRegister(device)
 	if roomDict != None:
 		deviceID, roomID, roomName = SelectRoom(device, roomDict)
 		if deviceID != None:
 			while True:
 				print(f'\n==> Ambiente [{roomID}] {roomName}')
-				print('Para sair use CTRL+X')
+				print('Para sair digite "sair"')
 				print('0) para indicar que o sensor não detectou ninguém')
 				print('1) para indicar uma presença detectada')
 				sensorValue = input('Selecione:')
-				if sensorValue == '\x18': break
+				if sensorValue == 'sair': 
+					break
 				msg = MessageSensor()
 				if sensorValue == '0' or sensorValue == '1':
 					print(f'Meu ID={deviceID}')
