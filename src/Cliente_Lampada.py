@@ -5,10 +5,11 @@
 #													#
 #####################################################
 
+import socket
+
+from ClientUtil import *
 from Config import *
 from Message import *
-from ClientUtil import *
-import socket
 
 deviceID = None
 
@@ -24,7 +25,7 @@ if __name__ == '__main__':
 	except:
 		print(f'Falha ao tentar se conectar com o servidor {SERVIDOR} porta {PORTA}')
 		exit()
-	device = Device(connection, NUM_LAMPADA)
+	device = DeviceClient(connection, NUM_LAMPADA)
 	roomDict = ClientRegister(device)
 	if roomDict != None:
 		deviceID, roomID, roomName = SelectRoom(device, roomDict)
