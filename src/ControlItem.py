@@ -90,7 +90,7 @@ class MonitorItem:
 							#	INCLUIR_LAMPADA / EXCLUIR_LAMPADA
 							# Sensor de presença:
 							#	PRESENCA_NAO_DETECTADA / PRESENCA_DETECTADA
-	deviceQueue = None		# Fila para comunicação com a lâmpada
+	deviceQueue = None		# Fila para comunicação
 
 	def __init__(self, deviceID, deviceTypeCode, roomID, command, deviceQueue):
 		self.deviceID = deviceID
