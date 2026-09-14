@@ -363,8 +363,8 @@ class MessageAr(Message):
 	# Campos da mensagem
 	deviceID = None		# 4 bytes - unsigned int
 	action = None		# 1 byte - unsigned char
-							# 0 = Desligar
-							# 1 = Ligar
+						# 0 = Desligar
+						# 1 = Ligar
 
 	def __init__(self):
 		self.code = MSG_LAMPADA
