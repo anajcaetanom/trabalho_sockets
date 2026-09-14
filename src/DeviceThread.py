@@ -191,6 +191,8 @@ def WorkSensor(device, msg, controlQueue):
 	if device.typeCode == COD_SENSOR_PRESENCA:
 		print('Enviando mensagem do sensor para a fila do controle')
 		controlQueue.put(MonitorItem(device.ID, device.typeCode, device.roomID, device.value, None))
+	elif device.typeCode == COD_TERMOMETRO:
+		controlQueue.put(MonitorItem(device.ID, device.typeCode, device.roomID, device.value, None))
 	# Informando que a leitura foi recebida
 	msg = MessageStatus()
 	SendMessage(device, msg.pack(device.ID, LEITURA_RECEBIDA))
@@ -245,5 +247,7 @@ def DeviceThread(connection, clientIP, controlQueue):
 	if device.ID != None and device.typeCode == COD_LAMPADA:
 		# Se for uma lâmpada, remove o dispositivo da lista do ambiente
 		controlQueue.put(MonitorItem(device.ID, device.typeCode, device.roomID, EXCLUIR_LAMPADA, device.lampQueue))
+	if device.ID != None and device.typeCode == COD_AR:
+		controlQueue.put(MonitorItem(device.ID, device.typeCode, device.roomID, EXCLUIR_AR, device.airQueue))
 	print(f'Desconectado: {device.clientIP}')
 	connection.close()
