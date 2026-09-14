@@ -5,11 +5,12 @@
 #                                                   #
 #####################################################
 
+
 from Config import *
 from Message import *
-import socket
 
-class Device():
+
+class DeviceClient:
 	buffer = ''
 	connection = None
 	deviceType = ''
