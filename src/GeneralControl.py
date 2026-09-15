@@ -36,7 +36,7 @@ def GeneralControl(controlQueue, roomsList, typesList):
 				# Registrar a lâmpada
 				if monitorItem.command == INCLUIR_LAMPADA:
 					# Registra a nova lâmpada
-					roomItem.AddLamp(monitorItem.deviceID, monitorItem.lampQueue)
+					roomItem.AddLamp(monitorItem.deviceID, monitorItem.deviceQueue)
 				# Desregistrar a lâmpada
 				if monitorItem.command == EXCLUIR_LAMPADA:
 					# Remove a lâmpada do registro
