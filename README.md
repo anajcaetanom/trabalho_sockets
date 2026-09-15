@@ -3,7 +3,7 @@
 
 # Trabalho sockets
 
-aluna blablabla trabalho de redes mestrado etc e tal
+Este repositório contém o trabalho desenvolvido pela aluna Ana Júlia C. Martins para a disciplina de Redes de Computadores do curso Mestrado Profissional em Computação Aplicada pelo Instituto Federal do Espírito Santo, semestre 2026/2. O projeto tem como objetivo compreender os fundamentos de Sockets.
 
 ## Sockets TCP no contexto do sistema
 
@@ -103,7 +103,7 @@ Máscara: `'!BdB'` → 1+8+1 = 10 bytes
 | dateTime | d (8 bytes) | timestamp |
 | deviceType | B (1 byte) | tipo do dispositivo: 1=Lâmpada, 2=Sensor de Presença, 3=Termômetro, 4=Ar Condicionado |
 
-É a **primeira mensagem** enviada por qualquer cliente ao conectar, feita em `ClientRegister()`.
+É a primeira mensagem enviada por qualquer cliente ao conectar, feita em `ClientRegister()`.
 
 **2) `MessageList` (código 3) — Servidor → Cliente**
 Máscara do cabeçalho: `'!BdH'` → 1+8+2 = 11 bytes, mais um bloco repetido `'!H20s'` (2+20 = 22 bytes) por ambiente
@@ -187,4 +187,9 @@ A ordem é controlada pela máquina de estados de `DeviceThread.py`, através da
 5. Servidor → Cliente: `MessageLamp` (ação a executar — o servidor só envia isso quando chega um comando na fila interna do ambiente)
 6. Cliente → Servidor: `MessageStatus` com `ACAO_EXECUTADA`
 
-Sensores **iniciam** o envio de dados (o cliente empurra leituras), enquanto atuadores **aguardam passivamente** um comando do servidor (`WaitLampQueue`/`WaitArQueue`, bloqueados na fila) e só respondem depois de executar a ação recebida. 
+Sensores iniciam o envio de dados, enquanto atuadores aguardam passivamente um comando do servidor.
+
+
+## Fluxograma do Sistema
+
+![Fluxograma](Fluxogramas.pdf)
